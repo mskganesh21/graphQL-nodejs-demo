@@ -1,34 +1,41 @@
 import { Model, DataTypes } from "sequelize";
 import { SequelizeConfig } from "../config/dbConnect.js";
 
-class User extends Model {
+class Product extends Model {
   static associate(models) {
-    User.hasMany(models.Order, {
-      foreignKey: "userId",
-      as: "orders",
+    Product.hasMany(models.OrderItem, {
+      foreignKey: "productId",
+      as: "orderItems",
     });
   }
 }
 
-User.init(
+Product.init(
   {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    email: {
+    name: {
       type: DataTypes.STRING,
-      unique: true,
+      allowNull: false,
+    },
+    price: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
+    },
+    category: {
+      type: DataTypes.TEXT,
       allowNull: false,
     },
   },
   {
     sequelize: SequelizeConfig,
-    modelName: "User",
-    tableName: "users",
+    modelName: "Product",
+    tableName: "products",
     timestamps: true,
   }
 );
 
-export default User;
+export default Product;

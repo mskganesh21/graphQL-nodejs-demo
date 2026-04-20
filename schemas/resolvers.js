@@ -78,8 +78,8 @@ const resolvers = {
   },
 
   OrderItem: {
-    product: async (item, _, { models }) => {
-      return await models.Product.findByPk(item.productId);
+    product: async (item, _, { loaders }) => {
+      return await loaders.productLoader.load(item.productId);
     },
   },
 };

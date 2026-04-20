@@ -1,8 +1,5 @@
-import {gql} from '@apollo/server';
-
-const typeDefs = gql`
-
-#--------------TYPES--------------
+const typeDefs = `
+  #--------------TYPES--------------
 
   type User {
     id: ID!
@@ -10,7 +7,7 @@ const typeDefs = gql`
     orders(status: String): [Order]
     orderCount(status: String): Int
   }
-  
+
   type Product {
     id: ID!
     name: String!
@@ -30,31 +27,31 @@ const typeDefs = gql`
   type OrderItem {
     id: ID!
     orderId: ID!
-    productId: ID!
+    product: Product!
     quantity: Int!
-    }
+  }
 
-#------------- INPUT TYPES-------------
-input CreateUserInput {
-email: String!
-}
+  #------------- INPUT TYPES-------------
+  input CreateUserInput {
+    email: String!
+  }
 
-#---------------QUERIES----------------------
-type Query {
-users: [User!]!
-user(id:ID!): User
+  #---------------QUERIES----------------------
+  type Query {
+    users: [User!]!
+    user(id: ID!): User
 
-products(category: String): [Product!]!
+    products(category: String): [Product!]!
 
-orders(userId: ID,status: String): [Order!]!
+    orders(userId: ID, status: String): [Order!]!
 
-order(id: ID!): Order
-}
+    order(id: ID!): Order
+  }
 
-#---------------MUTATIONS---------------------
-type Mutation {
-createUser(input: CreateUserInput): User!
-}
-  `;
+  #---------------MUTATIONS---------------------
+  type Mutation {
+    createUser(input: CreateUserInput): User!
+  }
+`;
 
 export default typeDefs;

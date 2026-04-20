@@ -15,12 +15,25 @@ const resolvers = {
       return await models.Product.findAll();
     },
 
-    orders: async (_, { userId, status }, { models }) => {
-      const where = {};
-      if (userId) where.userId = userId;
-      if (status) where.status = status;
-
-      return await models.Order.findAll({ where });
+    orders: async (_, args, { models }) => {
+      return await models.Order.findAll({
+        include: [
+          {
+            model: models.User,
+            as: "user",
+          },
+          {
+            model: models.OrderItem,
+            as: "items",
+            include: [
+              {
+                model: models.Product,
+                as: "product",
+              },
+            ],
+          },
+        ],
+      });
     },
 
     order: async (_, { id }, { models }) => {
@@ -55,30 +68,13 @@ const resolvers = {
   },
 
   Order: {
-    user: async (order, _, { models }) => {
-      return await models.User.findByPk(order.userId);
-    },
-
-    items: async (order, _, { models }) => {
-      return await models.OrderItem.findAll({
-        where: { orderId: order.id },
-      });
-    },
-
-    total: async (order, _, { models }) => {
-      const items = await models.OrderItem.findAll({
-        where: { orderId: order.id },
-      });
-
-      let total = 0;
-
-      for (let item of items) {
-        const product = await models.Product.findByPk(item.productId);
-        total += product.price * item.quantity;
-      }
-
-      return total;
-    },
+    user: (order) => order.user,
+    items: (order) => order.items,
+    total: (order) =>
+      order.items.reduce(
+        (sum, item) => sum + item.product.price * item.quantity,
+        0,
+      ),
   },
 
   OrderItem: {
